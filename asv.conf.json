@@ -9,7 +9,7 @@
     "matrix": {
         "magpylib": [""]
     },
-    "benchmark_dir": "benchmarks",
+    "benchmark_dir": "python/benchmarks",
     "env_dir": ".asv/env",
     "results_dir": ".asv/results",
     "html_dir": ".asv/html"
