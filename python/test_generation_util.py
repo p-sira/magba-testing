@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 from numpy.typing import NDArray
 
-TEST_DATA_DIR = Path(__file__).parent.parent / "tests" / "test-data"
+TEST_DATA_DIR = Path(__file__).parent.parent / "data"
 
 
 def generate_grid(bounds: NDArray, N: Iterable) -> NDArray:
