@@ -1,8 +1,9 @@
 # Magba is licensed under The 3-Clause BSD, see LICENSE.
 # Copyright 2025 Sira Pornsiriprasert <code@psira.me>
 
-from dataclasses import dataclass
 from collections.abc import Callable
+from dataclasses import dataclass
+
 import numpy as np
 from magpylib.func import cuboid_field, cylinder_field, dipole_field
 from scipy.spatial.transform import Rotation

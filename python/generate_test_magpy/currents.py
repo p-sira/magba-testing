@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from magpylib.current import Circle, TriangleSheet, Polyline
+from magpylib.current import Circle, Polyline, TriangleSheet
 from scipy.spatial.transform import Rotation
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -37,9 +37,7 @@ def generate_test(source_class, points, points_small, **kwargs):
 
     small_kwargs = {}
     for k, v in kwargs.items():
-        if isinstance(v, np.ndarray) and v.dtype.kind in "fc":
-            small_kwargs[k] = v / 10.0
-        elif isinstance(v, (float, int)):
+        if isinstance(v, np.ndarray) and v.dtype.kind in "fc" or isinstance(v, (float, int)):
             small_kwargs[k] = v / 10.0
         elif isinstance(v, (list, tuple)):
             if k == "faces":
@@ -113,7 +111,9 @@ def generate_tests(points, points_small):
         points,
         points_small,
         current=1.0,
-        vertices=np.array([[-0.1, -0.1, -0.1], [0.1, -0.1, -0.1], [0.0, 0.1, -0.1], [0.0, 0.0, 0.1]]),
+        vertices=np.array(
+            [[-0.1, -0.1, -0.1], [0.1, -0.1, -0.1], [0.0, 0.1, -0.1], [0.0, 0.0, 0.1]]
+        ),
     )
 
 

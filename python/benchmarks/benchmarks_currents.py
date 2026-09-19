@@ -1,9 +1,10 @@
 import numpy as np
-from magpylib.current import Circle, TriangleSheet, Polyline
+from magpylib.current import Circle, Polyline, TriangleSheet
 from scipy.spatial.transform import Rotation
 
 POSITION = (0.1, 0.2, 0.3)
 ORIENTATION = Rotation.from_rotvec([np.pi / 7, np.pi / 6, np.pi / 5])
+
 
 def get_points():
     bounds = np.array([[-0.5, 0.5]] * 3)
@@ -12,18 +13,17 @@ def get_points():
     mesh = np.meshgrid(*linsp)
     return np.column_stack([m.flatten() for m in mesh])
 
+
 class CircularCurrentBenchmark:
     def setup(self):
         self.points = get_points()
         self.source = Circle(
-            position=POSITION,
-            orientation=ORIENTATION,
-            diameter=1.0,
-            current=1.0
+            position=POSITION, orientation=ORIENTATION, diameter=1.0, current=1.0
         )
-    
+
     def time_getB(self):
         self.source.getB(self.points)
+
 
 class PathCurrentBenchmark:
     def setup(self):
@@ -32,11 +32,19 @@ class PathCurrentBenchmark:
             position=POSITION,
             orientation=ORIENTATION,
             current=100.0,
-            vertices=np.array([[-0.1, -0.1, -0.1], [0.1, -0.1, -0.1], [0.0, 0.1, -0.1], [0.0, 0.0, 0.1]])
+            vertices=np.array(
+                [
+                    [-0.1, -0.1, -0.1],
+                    [0.1, -0.1, -0.1],
+                    [0.0, 0.1, -0.1],
+                    [0.0, 0.0, 0.1],
+                ]
+            ),
         )
 
     def time_getB(self):
         self.source.getB(self.points)
+
 
 class SheetCurrentBenchmark:
     def setup(self):
@@ -56,11 +64,12 @@ class SheetCurrentBenchmark:
                 (1.0, 2.0, 3.0),
                 (1.0, 2.0, 3.0),
                 (1.0, 2.0, 3.0),
-            ]
+            ],
         )
-    
+
     def time_getB(self):
         self.source.getB(self.points)
+
 
 class TriangleCurrentBenchmark:
     def setup(self):
@@ -74,7 +83,7 @@ class TriangleCurrentBenchmark:
                 (0.0, 0.1, -0.1),
             ],
             faces=[[0, 1, 2]],
-            current_densities=[(1.0, 2.0, 3.0)]
+            current_densities=[(1.0, 2.0, 3.0)],
         )
 
     def time_getB(self):

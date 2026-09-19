@@ -4,10 +4,10 @@
 import sys
 from pathlib import Path
 
-from magpylib.misc import Dipole
 import numpy as np
 from magpylib import Collection
 from magpylib.magnet import Cuboid, Cylinder
+from magpylib.misc import Dipole
 from scipy.spatial.transform import Rotation
 
 sys.path.append(str(Path(__file__).parent.parent))

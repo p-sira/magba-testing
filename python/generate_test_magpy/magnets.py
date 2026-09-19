@@ -26,9 +26,7 @@ def generate_test(source_class, points, points_small, **kwargs):
 
     small_kwargs = {}
     for k, v in kwargs.items():
-        if isinstance(v, np.ndarray) and v.dtype.kind == 'f':
-            small_kwargs[k] = v / 10.0
-        elif isinstance(v, float):
+        if isinstance(v, np.ndarray) and v.dtype.kind == "f" or isinstance(v, float):
             small_kwargs[k] = v / 10.0
         else:
             small_kwargs[k] = v
@@ -88,7 +86,9 @@ def generate_tests(points, points_small):
         Triangle,
         points,
         points_small,
-        vertices=np.array([[-0.1, -0.1, -0.1], [0.1, -0.1, 0.1], [0.0, 0.2, 0.0]]),  # vertices
+        vertices=np.array(
+            [[-0.1, -0.1, -0.1], [0.1, -0.1, 0.1], [0.0, 0.2, 0.0]]
+        ),  # vertices
         polarization=np.array((1.0, 2.0, 3.0)),  # polarization
     )
 
@@ -96,7 +96,9 @@ def generate_tests(points, points_small):
         Tetrahedron,
         points,
         points_small,
-        vertices=np.array([[-0.1, -0.1, -0.1], [0.1, -0.1, -0.1], [0.0, 0.1, -0.1], [0.0, 0.0, 0.1]]),  # vertices
+        vertices=np.array(
+            [[-0.1, -0.1, -0.1], [0.1, -0.1, -0.1], [0.0, 0.1, -0.1], [0.0, 0.0, 0.1]]
+        ),  # vertices
         polarization=np.array((1.0, 2.0, 3.0)),  # polarization
     )
 
@@ -104,11 +106,12 @@ def generate_tests(points, points_small):
         TriangularMesh,
         points,
         points_small,
-        vertices=np.array([[-0.1, -0.1, -0.1], [0.1, -0.1, -0.1], [0.0, 0.1, -0.1], [0.0, 0.0, 0.1]]),  # vertices
-        faces=np.array([[0, 2, 1], [0, 1, 3], [1, 2, 3], [0, 3, 2]]), # faces
+        vertices=np.array(
+            [[-0.1, -0.1, -0.1], [0.1, -0.1, -0.1], [0.0, 0.1, -0.1], [0.0, 0.0, 0.1]]
+        ),  # vertices
+        faces=np.array([[0, 2, 1], [0, 1, 3], [1, 2, 3], [0, 3, 2]]),  # faces
         polarization=np.array((1.0, 2.0, 3.0)),  # polarization
     )
-
 
 
 if __name__ == "__main__":

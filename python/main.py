@@ -2,10 +2,10 @@
 # Copyright 2025 Sira Pornsiriprasert <code@psira.me>
 
 from generate_test_magpy import (
+    heterogeneous_source_collection,
+    homogeneous_source_collection,
     magnets,
 )
-from generate_test_magpy import homogeneous_source_collection
-from generate_test_magpy import heterogeneous_source_collection
 from test_generation_util import generate_points
 
 if __name__ == "__main__":

@@ -5,8 +5,8 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from stl import mesh as stl_mesh
 from magpylib.magnet import TriangularMesh
+from stl import mesh as stl_mesh
 
 sys.path.append(str(Path(__file__).parent.parent))
 
