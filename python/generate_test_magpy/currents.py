@@ -37,7 +37,11 @@ def generate_test(source_class, points, points_small, **kwargs):
 
     small_kwargs = {}
     for k, v in kwargs.items():
-        if isinstance(v, np.ndarray) and v.dtype.kind in "fc" or isinstance(v, (float, int)):
+        if (
+            isinstance(v, np.ndarray)
+            and v.dtype.kind in "fc"
+            or isinstance(v, (float, int))
+        ):
             small_kwargs[k] = v / 10.0
         elif isinstance(v, (list, tuple)):
             if k == "faces":
