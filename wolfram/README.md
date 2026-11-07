@@ -41,6 +41,7 @@ componentwise difference must be below
 `1e-20 × max(1e-18 T, largest |B component|)`. Individual generators check
 additional analytical identities where available. Output is deterministic
 ASCII decimal CSV with 26 significant digits; numerical symmetry residuals
-below `1e-40 T` become zero. Regular interior/exterior, off-axis, different
-scale and near-boundary cases are included; **exact singular boundaries are
-excluded**.
+below `1e-40 T` become zero. Stress cases vary shape, aspect ratio,
+scale and proximity to boundaries, excluding exact singularities. An integer
+`shape` column selects alternate vertices or mesh topology where applicable.
+The Rust harness also checks translated and rotated sources in `f64` and `f32`.

@@ -34,7 +34,15 @@ sphereCases = {
   {"far_oblique", {-1/5, 1/3, 2/7}, 3/2, {8, -5, 4}},
   {"tiny_near_surface_outside", {1/2, -3/5, 1/7}, 1/500,
     {1001/1000000, 0, 0}},
-  {"zero_polarization", {0, 0, 0}, 2, {0, 0, 3/2}}
+  {"zero_polarization", {0, 0, 0}, 2, {0, 0, 3/2}},
+  {"near_surface_inside_skew", {-7/9, 5/8, 11/13}, 2,
+    {85/128, 85/256, 85/128}},
+  {"near_surface_outside_skew", {-2/7, 3/5, 4/9}, 2,
+    {257/384, 257/768, 257/384}},
+  {"micrometer_inside", {3/7, -11/17, 2/5}, 1/10000,
+    {1/60000, -1/80000, 1/120000}},
+  {"megameter_outside", {5/8, -2/3, 1/7}, 2000000,
+    {1500000, -1250000, 1000000}}
 };
 
 sphereRows = Table[

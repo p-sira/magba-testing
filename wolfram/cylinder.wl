@@ -84,7 +84,21 @@ cylinderCases = {
   {"diametric_center_y", {0, -1/2, 0}, 2, 2, {0, 0, 0}},
   {"diametric_offaxis_outside", {3/4, 1/4, 0}, 2, 2, {2, 1/2, 1/4}},
   {"mixed_inside", {1/2, -1/4, 3/4}, 3/2, 5/4, {1/4, -1/8, 1/8}},
-  {"mixed_far", {-1/3, 2/5, -1/2}, 3/2, 3, {2, -2, 4}}
+  {"mixed_far", {-1/3, 2/5, -1/2}, 3/2, 3, {2, -2, 4}},
+  (* Thin disk: diameter/height = 16, one point near its top face
+     from inside and one outside its cylindrical rim. *)
+  {"thin_disk_axial_near_face_inside", {0, 0, 1}, 2, 1/8, {1/4, 0, 7/128}},
+  {"thin_disk_mixed_near_rim_outside", {1/2, -1/4, 3/4}, 2, 1/8,
+    {129/128, 0, 1/32}},
+  (* Long rod: height/diameter = 16, with near-side interior and
+     near-cap exterior samples. *)
+  {"long_rod_diametric_near_side_inside", {1, 0, 0}, 1/4, 4,
+    {63/512, 0, 3/4}},
+  {"long_rod_axial_near_cap_outside", {0, 0, -3/4}, 1/4, 4,
+    {1/32, 1/64, 2 + 1/512}},
+  (* A smaller thin disk exercises the side charge near the rim. *)
+  {"small_disk_diametric_near_rim_outside", {-1/2, 0, 0}, 1/4, 1/64,
+    {65/512, 0, 0}}
 };
 
 Print["Cylinder reference: exact rational geometry and polarization (T); ",

@@ -4,18 +4,48 @@
    integration over rays to the opposite edge. *)
 
 ClearAll[polyRayPrimitive, polyFaceKernel, polyTriangleB, polyClosedB,
-  polyInsideQ, polyGenerate, polyTriangleVertices, polyTetraVertices,
-  polyTetraFaces];
+  polyInsideQ, polyGenerate, polyTriangleVertices, polyTriangleVerticesAlt,
+  polyTetraVertices, polyTetraVerticesAlt, polyTetraFaces,
+  polyBipyramidVertices, polyBipyramidFaces, polyTriangleGeometries,
+  polyTetraGeometries, polyMeshGeometries, polyOutwardQ,
+  polyOffFacePlanesQ];
 
 polyTriangleVertices = {
   {-1/2, -1/2, -1/2}, {1/2, -1/2, 1/2}, {0, 1/2, 0}
+};
+polyTriangleVerticesAlt = {
+  {-3/4, -1/4, 1/3}, {1/2, -1/2, 1/8}, {1/4, 3/4, -1/3}
 };
 polyTetraVertices = {
   {-1/2, -1/2, -1/2}, {1/2, -1/2, -1/2},
   {0, 1/2, -1/2}, {0, 0, 1/2}
 };
+polyTetraVerticesAlt = {
+  {-3/4, -1/2, -1/3}, {1/2, -1/4, -1/2},
+  {1/4, 3/4, -1/4}, {-1/8, 1/8, 4/5}
+};
 (* Zero-based, outward-facing vertex indices as passed to Magba. *)
 polyTetraFaces = {{0, 2, 1}, {0, 1, 3}, {1, 2, 3}, {0, 3, 2}};
+(* A distinct closed, five-vertex triangular bipyramid mesh. *)
+polyBipyramidVertices = {
+  {-3/4, -1/2, 0}, {3/4, -1/2, 0}, {0, 3/4, 0},
+  {0, 0, 5/4}, {0, 0, -3/4}
+};
+polyBipyramidFaces = {
+  {0, 1, 3}, {1, 2, 3}, {0, 3, 2},
+  {0, 4, 1}, {1, 4, 2}, {0, 2, 4}
+};
+(* Shape IDs correspond exactly to the integer CSV column. *)
+polyTriangleGeometries = {
+  {polyTriangleVertices, {{0, 1, 2}}},
+  {polyTriangleVerticesAlt, {{0, 1, 2}}}
+};
+polyTetraGeometries = {
+  {polyTetraVertices, polyTetraFaces},
+  {polyTetraVerticesAlt, polyTetraFaces}
+};
+polyMeshGeometries = Append[polyTetraGeometries,
+  {polyBipyramidVertices, polyBipyramidFaces}];
 
 (* Primitive of t (r-t d)/|r-t d|^3, at fixed ray direction d.
    h2 is positive provided the observer is off the face plane. *)
@@ -49,8 +79,8 @@ polyFaceKernel[vertices_, p_, wp_] := Module[
   ]
 ];
 
-polyTriangleB[j_, p_, wp_] := Module[
-  {v = polyTriangleVertices, normalArea},
+polyTriangleB[vertices_, j_, p_, wp_] := Module[
+  {v = vertices, normalArea},
   normalArea = Cross[v[[2]] - v[[1]], v[[3]] - v[[1]]];
   (j.normalArea) polyFaceKernel[v, p, wp]/(4 Pi)
 ];
@@ -60,6 +90,21 @@ polyTriangleB[j_, p_, wp_] := Module[
 polyInsideQ[vertices_, faces_, p_] := And @@ Table[
   With[{v = vertices[[face + 1]]},
     Cross[v[[2]] - v[[1]], v[[3]] - v[[1]]].(p - v[[1]]) < 0
+  ], {face, faces}
+];
+
+polyOutwardQ[vertices_, faces_] := Module[
+  {center = Total[vertices]/Length[vertices]},
+  And @@ Table[
+    With[{v = vertices[[face + 1]]},
+      Cross[v[[2]] - v[[1]], v[[3]] - v[[1]]].(center - v[[1]]) < 0
+    ], {face, faces}
+  ]
+];
+
+polyOffFacePlanesQ[vertices_, faces_, p_] := And @@ Table[
+  With[{v = vertices[[face + 1]]},
+    Cross[v[[2]] - v[[1]], v[[3]] - v[[1]]].(p - v[[1]]) != 0
   ], {face, faces}
 ];
 
@@ -74,15 +119,40 @@ polyClosedB[vertices_, faces_, j_, p_, wp_] := Module[
   surface/(4 Pi) + If[polyInsideQ[vertices, faces, p], j, {0, 0, 0}]
 ];
 
-polyGenerate[stem_String, cases_List, field_] := Module[{rows},
-  Print["Generating ", stem, " from Coulomb surface charge (40/60 digits)"];
-  rows = Table[
-    With[{label = case[[1]], j = case[[2]], p = case[[3]]},
-      Join[{label}, hpASCII /@ j, hpASCII /@ p,
-        hpASCII /@ hpConfirmed[stem <> "/" <> label, field[j, p, #] &]]
+polyGenerate[stem_String, cases_List, geometries_List, field_] := Module[
+  {rows, shape, vertices, faces, j, p},
+  If[!DuplicateFreeQ[cases[[All, 1]]],
+    Print["FAIL duplicate ", stem, " case labels"]; Exit[1]
+  ];
+  Do[
+    shape = case[[2]]; j = case[[3]]; p = case[[4]];
+    If[!IntegerQ[shape] || shape < 0 || shape >= Length[geometries],
+      Print["FAIL invalid shape for ", stem, "/", case[[1]]]; Exit[1]
+    ];
+    {vertices, faces} = geometries[[shape + 1]];
+    If[!TrueQ[polyOffFacePlanesQ[vertices, faces, p]],
+      Print["FAIL on face plane for ", stem, "/", case[[1]]]; Exit[1]
+    ];
+    If[And @@ Table[
+        j.Cross[vertices[[face[[2]] + 1]] - vertices[[face[[1]] + 1]],
+          vertices[[face[[3]] + 1]] - vertices[[face[[1]] + 1]]] == 0,
+        {face, faces}
+      ],
+      Print["FAIL zero magnetic surface charge for ", stem, "/", case[[1]]];
+      Exit[1]
     ],
     {case, cases}
   ];
-  hpWriteCSV[stem, {"case", "jx", "jy", "jz", "x", "y", "z",
+  Print["Generating ", stem, " from Coulomb surface charge (40/60 digits)"];
+  rows = Table[
+    With[{label = case[[1]], shape = case[[2]],
+          j = case[[3]], p = case[[4]]},
+      Join[{label, shape}, hpASCII /@ j, hpASCII /@ p,
+        hpASCII /@ hpConfirmed[
+          stem <> "/" <> label, field[shape, j, p, #] &]]
+    ],
+    {case, cases}
+  ];
+  hpWriteCSV[stem, {"case", "shape", "jx", "jy", "jz", "x", "y", "z",
      "bx", "by", "bz"}, rows]
 ];
