@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from magpylib.magnet import Cuboid, Cylinder, Sphere, Tetrahedron, TriangularMesh
+from magpylib.magnet import Cuboid, Cylinder, CylinderSegment, Sphere, Tetrahedron, TriangularMesh
 from magpylib.misc import Dipole, Triangle
 from scipy.spatial.transform import Rotation
 
@@ -27,7 +27,10 @@ def generate_test(source_class, points, points_small, **kwargs):
     small_kwargs = {}
     for k, v in kwargs.items():
         if isinstance(v, np.ndarray) and v.dtype.kind == "f" or isinstance(v, float):
-            small_kwargs[k] = v / 10.0
+            if source_class is CylinderSegment and k == "dimension":
+                small_kwargs[k] = v * np.array([0.1, 0.1, 0.1, 1.0, 1.0])
+            else:
+                small_kwargs[k] = v / 10.0
         else:
             small_kwargs[k] = v
 
@@ -57,6 +60,14 @@ def generate_tests(points, points_small):
         points_small,
         dimension=np.array((0.1, 0.2)),  # dimensions (d, h)
         polarization=np.array((1.0, 2.0, 3.0)),  # polarization
+    )
+
+    generate_test(
+        CylinderSegment,
+        points,
+        points_small,
+        dimension=np.array((0.01, 0.03, 0.02, -30.0, 120.0)),
+        polarization=np.array((1.0, 2.0, 3.0)),
     )
 
     generate_test(
